@@ -95,7 +95,7 @@ public class Sniffer {
                     for(int i=0;i<packet.size();++i){
                         
                         String stemp = Integer.toHexString(array[i]);
-                        //if(stemp.length()==1) stemp = "0".concat(stemp);
+                        if(stemp.length()==1) stemp = "0".concat(stemp);
                         //if(i%16==0 && i!=0) System.out.println("");
                         //System.out.print( stemp + " " );
                         hex.add(stemp);
