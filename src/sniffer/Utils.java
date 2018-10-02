@@ -89,4 +89,13 @@ public class Utils {
         int unsignedByte = b & 0xFF;
         return Integer.toString(unsignedByte); // "200"
     }
+    
+    public static String arrayintToString(int[] x){
+        String s = new String("");
+        for(int i=0;i<x.length;++i){
+            s += (char)x[i] + " ";
+        }
+        
+        return s;
+    }
 }

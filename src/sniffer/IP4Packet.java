@@ -5,6 +5,9 @@
  */
 package sniffer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Pedro
@@ -27,6 +30,7 @@ public class IP4Packet {
     private String destination;
     private EthPacket eth;
     private ICMPacket icmp;
+    private Data data;
 
     public IP4Packet(int version, int headerlen, int codepoint, int ecnbits,
             int length, int id, int reservedbit, 
@@ -55,7 +59,13 @@ public class IP4Packet {
     
     private void constrIC(){
         int[] packetinfobyte=eth.getPacket().getPacketinfobyte();
+        List<String> packetinfohex=eth.getPacket().getPacketinfohex();
             //34
+        int padding;
+        if(this.length>=46)
+            padding = 0;
+        else
+            padding = 46-this.length;
         if(this.fragmentOffset==0 && this.protocol==1){
             
         
@@ -68,8 +78,29 @@ public class IP4Packet {
             int secbe = (packetinfobyte[40]<<8) | (packetinfobyte[41]);
             // Data declare
             this.icmp=new ICMPacket(type,code,checksum,idle,idbe,secle,secbe);
+            
+            int length=packetinfobyte.length-42;
+            int[] payloadbytes = new int[length];
+            for(int i=0;i<payloadbytes.length;++i){
+                payloadbytes[i]=packetinfobyte[i+42];
+            }
+            List<String> payloadhex = new ArrayList<String>(packetinfohex);
+            payloadhex = payloadhex.subList(42, packetinfohex.size());
+            
+            this.data=new Data(payloadbytes,payloadhex,length,padding);
+            
         } else {
             this.icmp=null;
+            int length=packetinfobyte.length-34;
+            int[] payloadbytes = new int[length];
+            for(int i=0;i<payloadbytes.length;++i){
+                payloadbytes[i]=packetinfobyte[i+34];
+            }
+            List<String> payloadhex = new ArrayList<String>(packetinfohex);
+            payloadhex = payloadhex.subList(34, packetinfohex.size());
+            
+            this.data=new Data(payloadbytes,payloadhex,length,padding);
+            
         }
         
         
@@ -82,12 +113,12 @@ public class IP4Packet {
             return "IP4Packet{" + "version=" + (int)version + ", headerlen=" + headerlen + ", codepoint=" + codepoint + ", ecnbits=" + ecnbits + 
                     ", length=" + length + ", id=" + id + ", reservedbit=" + (int)reservedbit + ", donotfragment=" + (int)donotfragment + ", morefragment=" 
                     + (int)morefragment + ", fragmentOffset=" + fragmentOffset + ", ttl=" + ttl + ", protocol=" + protocol + ",hchecksum " + hchecksum
-                    + ", source=" + source + ", destination=" + destination + '}';
+                    + ", source=" + source + ", destination=" + destination  + ",data "+ data.toString() + '}';
         else
             return "IP4Packet{" + "version=" + (int)version + ", headerlen=" + headerlen + ", codepoint=" + codepoint + ", ecnbits=" + ecnbits + 
                     ", length=" + length + ", id=" + id + ", reservedbit=" + (int)reservedbit + ", donotfragment=" + (int)donotfragment + ", morefragment=" 
                     + (int)morefragment + ", fragmentOffset=" + fragmentOffset + ", ttl=" + ttl + ", protocol=" + protocol + ",hchecksum=" + hchecksum
-                    + ", source=" + source + ", destination=" + destination + ", ICMP="+ icmp.toString() +'}';
+                    + ", source=" + source + ", destination=" + destination + ", ICMP="+ icmp.toString() + ",data "+ data.toString() +'}';
     }
     
     

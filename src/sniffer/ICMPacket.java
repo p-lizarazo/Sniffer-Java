@@ -17,7 +17,6 @@ public class ICMPacket {
     private int idbe;
     private int seqle;
     private int seqbe;
-    private String data;
     
     public ICMPacket(int type, int code, int checksum, int idle, int idbe, int seqle, int seqbe) {
         this.type = type;
@@ -85,17 +84,9 @@ public class ICMPacket {
         this.seqbe = seqbe;
     }
 
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
-    }
-
     @Override
     public String toString() {
-        return "ICMPacket{" + "type=" + type + ", code=" + code + ", checksum=" + checksum + ", idle=" + idle + ", idbe=" + idbe + ", seqle=" + seqle + ", seqbe=" + seqbe + ", data=" + data + '}';
+        return "ICMPacket{" + "type=" + type + ", code=" + code + ", checksum=" + checksum + ", idle=" + idle + ", idbe=" + idbe + ", seqle=" + seqle + ", seqbe=" + seqbe + '}';
     }
     
     

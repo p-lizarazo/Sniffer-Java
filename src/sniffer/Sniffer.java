@@ -29,7 +29,6 @@ public class Sniffer {
  * and open the template in the editor.
  */
 
-
     
     public static void main(String[] args) {
        /* try{
@@ -40,6 +39,9 @@ public class Sniffer {
              e.printStackTrace();
        }
         */
+       
+       
+       
         List<PcapIf> alldevs = new ArrayList<PcapIf>(); // Will be filled with NICs
         StringBuilder errbuf = new StringBuilder(); // For any error msgs
 
@@ -68,10 +70,15 @@ public class Sniffer {
             private final Ethernet eth = new Ethernet(); // Preallocate our ethernet header
             private final Ip4 ip = new Ip4(); // Preallocat IP version 4 header
             private final Icmp icmp = new Icmp();
-            
+            double cont=0;
+            double Bps=0;
+            //clock =  clock(); Create clock of elapsed time
             @Override
-            public void nextPacket(PcapPacket packet, String user) {  
-                if (packet.hasHeader(icmp)  ) {
+            public void nextPacket(PcapPacket packet, String user) {
+                
+                cont+=(packet.getPacketWirelen()*8);
+                       
+                if (packet.hasHeader(ip)  ) {
                     //System.out.println(packet.toString());
                     //Packet p = Utils.parse2(packet.toString());     
                     //pkt_list.add(p);
@@ -84,21 +91,19 @@ public class Sniffer {
                        array[i]=Utils.unsignedToBytes(bytes[i]);
                    }
                     List<String> hex = new ArrayList<String>();
-                    /*
+                    
                     for(int i=0;i<packet.size();++i){
                         
                         String stemp = Integer.toHexString(array[i]);
-                        if(stemp.length()==1) stemp = "0".concat(stemp);
-                        if(i%16==0 && i!=0) System.out.println("");
-                        System.out.print( stemp + " " );
+                        //if(stemp.length()==1) stemp = "0".concat(stemp);
+                        //if(i%16==0 && i!=0) System.out.println("");
+                        //System.out.print( stemp + " " );
                         hex.add(stemp);
                         
                     }
-                    
-                    System.out.println("");
-                    */
                     Packet p = new Packet(num, (int) packet.getFrameNumber(),array,hex );
-                    System.out.println(p.toString());
+                    if(p.getEth().getIp4().getProtocol()==1)
+                        System.out.println(p.toString());
                 }
            }
         };
